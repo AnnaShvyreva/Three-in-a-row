@@ -2,9 +2,18 @@ package ru.vsu.csf.shvyreva.model;
 
 public class BoardCell {
 
-    private boolean isEmpty;
+    public boolean isEmpty;
     public PieceColor color;
     private Piece piece;
+    public boolean delete;
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
+    }
 
     public BoardCell(boolean isEmpty) {
         this.isEmpty = isEmpty;

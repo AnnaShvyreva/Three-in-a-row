@@ -11,8 +11,8 @@ public class DesktopLauncher {
 
     public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        config.title = "Звездочка";
-        config.addIcon("assets/icon1.png", Files.FileType.Internal);
+        config.title = "ThreeInARow";
+        config.addIcon("assets/icon.png", Files.FileType.Internal);
         config.width = ThreeInARow.WIDTH;
         config.height = ThreeInARow.HEIGHT;
 		new LwjglApplication(new ThreeInARow(), config);

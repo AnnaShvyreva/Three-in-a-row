@@ -4,7 +4,6 @@ import java.io.File;
 /**
  * Created by Анна on 28.09.2014.
  */
-
 //класс игры - следит за временем, жизнями, доской, фишками
 public class Game {
 
