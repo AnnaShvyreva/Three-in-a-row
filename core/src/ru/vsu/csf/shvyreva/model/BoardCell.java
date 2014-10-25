@@ -6,6 +6,15 @@ public class BoardCell {
     public PieceColor color;
     private Piece piece;
     public boolean delete;
+    public boolean select;
+
+    public boolean isSelect() {
+        return select;
+    }
+
+    public void setSelect(boolean select) {
+        this.select = select;
+    }
 
     public boolean isDelete() {
         return delete;

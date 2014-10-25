@@ -3,6 +3,10 @@ package ru.vsu.csf.shvyreva.model;
 
 import com.badlogic.gdx.Gdx;
 import com.sun.org.apache.bcel.internal.classfile.Unknown;
+import javafx.scene.control.Cell;
+import ru.vsu.csf.shvyreva.ThreeInARow;
+import ru.vsu.csf.shvyreva.renderers.BoardRenderer;
+import ru.vsu.csf.shvyreva.screens.GameScreen;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,7 +22,11 @@ import java.util.Random;
 public class Board {
 
 
-    private  BoardCell[][] cells;
+    public  BoardCell[][] cells;
+    //public BoardCell selCell;
+    public Boolean click = false;
+    public SelectedCell firstClick;
+    public SelectedCell secondClick;
 
     private static Board instance;
 
@@ -36,24 +44,55 @@ public class Board {
             for (int i = 0; i < height; i++) {
                 cells[j][i] = new BoardCell(true);
                 cells[j][i].setDelete(false);
+                cells[j][i].setSelect(false);
             }
         }
-        //randomCreate();
 
-        /*cells[0][1].setDelete(true);
-        cells[0][1].setEmpty(true);
-        cells[0][1].setColor(PieceColor.Unknown);*/
-
-        //int num=0;
         do {
             randomCreate();
             checkChain();
-            //num = numEmpty(num);
-            //Gdx.app.log("num ", num+"\n");
-            //numEmpty();
-            moving();
+             moving();
         }while (numEmpty()!=0);
 
+
+
+    }
+
+    public void selectedCell(int i, int j){
+        //click = true;
+        //Gdx.app.log("err "," j="+j+" i="+i);
+        int x = cells.length - i-1;
+        int y = cells[0].length - j-1;
+        //Gdx.app.log("err "," i="+i+" j="+j);
+        //Gdx.app.log("err "," x="+x+" y="+y);
+        cells[x][y].setSelect(true);
+        Gdx.app.log("","Color = "+ cells[x][y].getColor());
+
+        for(int k=0; k<cells.length; k++) {
+            for (int m = 0; m < cells[0].length; m++) {
+                if ((cells[k][m].isSelect())&((k!=x)||(m!=y))) cells[k][m].setSelect(false);
+            }
+        }
+
+
+        if (click==true) {
+            secondClick = new SelectedCell(x,y);
+            changeCells();
+            click = false;
+            cells[x][y].setSelect(false);
+        }
+        else {
+            click=true;
+            firstClick = new SelectedCell(x,y);
+        }
+
+    }
+
+    public void changeCells(){ //добавить проверку на возможность операции
+
+        PieceColor p = cells[firstClick.getI()][firstClick.getJ()].getColor();
+        cells[firstClick.getI()][firstClick.getJ()].setColor(cells[secondClick.getI()][secondClick.getJ()].getColor());
+        cells[secondClick.getI()][secondClick.getJ()].setColor(p);
     }
 
     public int numEmpty(){
@@ -67,7 +106,7 @@ public class Board {
                 if (cells[j][i].isEmpty()) num++;
             }
         }
-        Gdx.app.log("num ", num+"\n");
+        //Gdx.app.log("num ", num+"\n");
         return num;
     }
 
@@ -78,10 +117,10 @@ public class Board {
 
         for (BoardCell[] cell : cells) {
             for (int i = 0; i < height; i++) {
-                //if (cell[i].isEmpty()) {
+                if (cell[i].isEmpty()) {
                     cell[i].color = PieceColor.values()[random.nextInt(PieceColor.values().length - 1) + 1];
                     cell[i].setEmpty(false);
-                //}
+                }
             }
         }
     }
@@ -108,11 +147,9 @@ public class Board {
                     chainLength++;
                 } else {
                     if (chainLength > 2) {
-                        Gdx.app.log("Game", "Chain found at i = " + i + "; j = " + j);
+                        //Gdx.app.log("Game", "Chain found at i = " + i + "; j = " + j);
 
                         for (int k=i-1; k >= i - chainLength; k--){
-                            //cells[k][j].setDelete(true);
-                            //cells[k][j].setEmpty(true);
                             toDelete.add(new Point(k, j));
                         }
                     }
@@ -124,11 +161,9 @@ public class Board {
 
             if (chainLength > 2) {
 
-                Gdx.app.log("Game", "Chain found at i = " + (width - chainLength) + "; j = " + j);
+                //Gdx.app.log("Game", "Chain found at i = " + (width - chainLength) + "; j = " + j);
 
                 for (int k=width-1; k >= width - chainLength; k--){
-                    //cells[k][j].setDelete(true);
-                    //cells[k][j].setEmpty(true);
                     toDelete.add(new Point(k, j));
                 }
             }
@@ -137,11 +172,9 @@ public class Board {
 
         if (chainLength > 2) {
 
-            Gdx.app.log("Game", "Last Chain found");
+            //Gdx.app.log("Game", "Last Chain found");
 
             for (int k = width - 1; k >= width - chainLength; k--){
-                //cells[k][j].setDelete(true);
-                //cells[k][j].setEmpty(true);
                 toDelete.add(new Point(k, height - 1));
             }
         }
@@ -157,9 +190,6 @@ public class Board {
                 } else {
                     if (chainLength > 2) {
                         for (int k=i-1; k>=i-chainLength;k--){
-                            //Gdx.app.log("err3", "i = "+i+" k= "+k+" j= "+j+" chainLength = "+chainLength+"\n");
-                            //cells[j][k].setDelete(true);
-                            //cells[j][k].setEmpty(true);
                             toDelete.add(new Point(j, k));
                         }
                     }
@@ -169,9 +199,6 @@ public class Board {
             }
             if (chainLength > 2) {
                 for (int k=height-1; k>=height-chainLength;k--){
-                    //Gdx.app.log("err4", " k= "+k+" j= "+j+" chainLength = "+chainLength+"\n");
-                    //cells[j][k].setDelete(true);
-                    //cells[j][k].setEmpty(true);
                     toDelete.add(new Point(j, k));
                 }
             }
@@ -183,8 +210,6 @@ public class Board {
             cells[p.getX()][p.getY()].setDelete(true);
         }
     }
-
-
 
     public void moving() {
         int width = cells.length;
@@ -223,7 +248,6 @@ public class Board {
     public Board(File file) {
         //TODO: init
 
-
     }
 
     public void makeMove(int row, int col, Direction dir) {
@@ -233,13 +257,13 @@ public class Board {
     protected void fallPieces(int[][] affectedArea) {
         //TODO: falling logic
 
-
-
-
     }
 
     public void recreate() {
-        randomCreate();
-        Gdx.app.log("Game", "ksjgn");
+        do {
+            randomCreate();
+            checkChain();
+            moving();
+        }while (numEmpty()!=0);
     }
 }

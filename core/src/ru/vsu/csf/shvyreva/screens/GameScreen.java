@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import ru.vsu.csf.shvyreva.ThreeInARow;
+import ru.vsu.csf.shvyreva.model.Board;
 import ru.vsu.csf.shvyreva.renderers.BoardRenderer;
 
 
@@ -17,9 +19,24 @@ public class GameScreen extends ThreeInARowScreen {
         boardRenderer = new BoardRenderer();
 
         Gdx.input.setInputProcessor(new InputAdapter(){
+
+            @Override
+            public boolean mouseMoved(int screenX, int screenY) {
+
+                return  true;
+            }
+
             @Override
             public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+                screenY = ThreeInARow.HEIGHT - screenY;
+                screenX = ThreeInARow.WIDTH - screenX;
+
+                boardRenderer.choiceCell(screenY, screenX);
+
+                //добавить таймер
                 boardRenderer.board.recreate();
+
                 return true;
             }
 
@@ -34,9 +51,7 @@ public class GameScreen extends ThreeInARowScreen {
                         boardRenderer.board.moving();
                         break;
                 }
-                //if (keycode == Input.Keys.A) {
 
-                //}
                 return false;
             }
         });
