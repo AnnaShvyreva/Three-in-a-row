@@ -88,11 +88,22 @@ public class Board {
 
     }
 
-    public void changeCells(){ //добавить проверку на возможность операции
+    public void changeCells(){
 
-        PieceColor p = cells[firstClick.getI()][firstClick.getJ()].getColor();
-        cells[firstClick.getI()][firstClick.getJ()].setColor(cells[secondClick.getI()][secondClick.getJ()].getColor());
-        cells[secondClick.getI()][secondClick.getJ()].setColor(p);
+        if (((firstClick.getI()==secondClick.getI())&&(Math.abs(firstClick.getJ() - secondClick.getJ())==1))||
+                ((firstClick.getJ()==secondClick.getJ())&&(Math.abs(firstClick.getI()-secondClick.getI())==1))) {
+
+            PieceColor p = cells[firstClick.getI()][firstClick.getJ()].getColor();
+            cells[firstClick.getI()][firstClick.getJ()].setColor(cells[secondClick.getI()][secondClick.getJ()].getColor());
+            cells[secondClick.getI()][secondClick.getJ()].setColor(p);
+
+            checkChain();
+            if (numEmpty()!=0) moving();
+            else {
+                cells[secondClick.getI()][secondClick.getJ()].setColor(cells[firstClick.getI()][firstClick.getJ()].getColor());
+                cells[firstClick.getI()][firstClick.getJ()].setColor(p);
+            }
+        }
     }
 
     public int numEmpty(){
