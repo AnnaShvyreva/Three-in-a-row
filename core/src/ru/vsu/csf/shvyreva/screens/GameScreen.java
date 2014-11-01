@@ -67,11 +67,6 @@ public class GameScreen extends ThreeInARowScreen {
         batch.end();
     }
 
-    /*public  static void checkMoving(BoardCell cells, int i_1, int j_1, int i_2, int j_2){
-        if ( ((i_1==i_2)&&( Math.abs(j_1-j_2)==1)) || ((j_1==j_2)&&( Math.abs(i_1-i_2)==1)) ){
-
-        }
-    }*/
 
     @Override
     public void hide() {

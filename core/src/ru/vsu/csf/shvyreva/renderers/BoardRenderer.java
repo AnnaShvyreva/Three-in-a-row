@@ -133,11 +133,11 @@ public class BoardRenderer {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 if (cells[j][i].isSelect()){
-                    //batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 5, CELL_SIZE - 10, CELL_SIZE - 10);
-                    batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 5, 5, 5);
-                    batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 35, MARGIN_TOP - (i+1) * CELL_SIZE + 35, 5, 5);
-                    batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 35, MARGIN_TOP - (i+1) * CELL_SIZE + 5, 5, 5);
-                    batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 35, 5, 5);
+                    batch.draw(select, MARGIN_LEFT + j * CELL_SIZE , MARGIN_TOP - (i+1) * CELL_SIZE, CELL_SIZE , CELL_SIZE );
+                    //batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 5, 5, 5);
+                    //batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 35, MARGIN_TOP - (i+1) * CELL_SIZE + 35, 5, 5);
+                    //batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 35, MARGIN_TOP - (i+1) * CELL_SIZE + 5, 5, 5);
+                    //batch.draw(select, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 35, 5, 5);
 
                 }
             }
