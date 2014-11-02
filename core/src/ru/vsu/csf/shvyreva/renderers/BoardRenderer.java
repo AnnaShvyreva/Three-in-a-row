@@ -31,6 +31,7 @@ public class BoardRenderer {
     private TextureRegion purple;
     private TextureRegion yellow;
     private TextureRegion select;
+    private TextureRegion boom;
 
     public Board board;
 
@@ -41,6 +42,7 @@ public class BoardRenderer {
 
         select = new TextureRegion(new Texture(Gdx.files.internal("assets/select.png")));
 
+        boom = new TextureRegion(new Texture(Gdx.files.internal("assets/boom.png")));
         red = new TextureRegion(new Texture(Gdx.files.internal("assets/red.png")));
         green = new TextureRegion(new Texture(Gdx.files.internal("assets/green.png")));
         pink = new TextureRegion(new Texture(Gdx.files.internal("assets/pink.png")));
@@ -121,6 +123,7 @@ public class BoardRenderer {
                         break;
                     }
                     case Unknown:{
+                        batch.draw(boom, MARGIN_LEFT + j * CELL_SIZE + 5, MARGIN_TOP - (i+1) * CELL_SIZE + 5, CELL_SIZE - 10, CELL_SIZE - 10);
                         break;
                     }
                     default:

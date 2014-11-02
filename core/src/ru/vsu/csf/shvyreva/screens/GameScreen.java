@@ -35,6 +35,7 @@ public class GameScreen extends ThreeInARowScreen {
                 boardRenderer.choiceCell(screenY, screenX);
 
                 //добавить таймер
+
                 boardRenderer.board.recreate();
 
                 return true;

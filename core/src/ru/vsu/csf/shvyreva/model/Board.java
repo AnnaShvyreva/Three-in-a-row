@@ -51,7 +51,12 @@ public class Board {
         do {
             randomCreate();
             checkChain();
-             moving();
+            ///////////////////////
+            ///////////////////////
+            //перерисовать! таймер!
+            ///////////////////////
+            ///////////////////////
+            moving();
         }while (numEmpty()!=0);
 
 
@@ -242,6 +247,11 @@ public class Board {
 
                         cells[i][k].setEmpty(true);
                         cells[i][k].setColor(PieceColor.Unknown);
+                        ///////////////////////
+                        ///////////////////////
+                        //ПЕРЕРИСОВАТЬ! ТАЙМЕР!
+                        ///////////////////////
+                        ///////////////////////
                         break;
                     }
                 }
@@ -270,11 +280,89 @@ public class Board {
 
     }
 
+    public boolean noCombinations(){
+
+        int width = cells.length;
+        int height = cells[0].length;
+
+        int flag = 0;
+
+        for (int i= 0; i < width; i++) {
+            for (int j = 0; j<height; j++) {
+                PieceColor c = cells[i][j].getColor();
+                if(i<width-3) {
+                    if (((cells[i + 1][j].getColor() == c)||(cells[i + 2][j].getColor() == c)) && (cells[i + 3][j].getColor() == c)){
+                        flag++;
+                        break;
+                    }
+                }
+                if (j<height-3) {
+                    if (((cells[i][j + 1].getColor() == c)||(cells[i][j + 2].getColor() == c)) && (cells[i][j + 3].getColor() == c)){
+                        flag++;
+                        break;
+                    }
+                }
+                if ((i<width-2)&&(j>0)&&(j<height-1)) {
+                    if (((cells[i + 1][j + 1].getColor() == c)||(cells[i + 1][j - 1].getColor() == c)) && (cells[i + 2][j].getColor() == c)) {
+                        flag++;
+                        break;
+                    }
+                }
+                if ((i>0)&&(i<width-1)&&(j<height-2)) {
+                    if (((cells[i + 1][j + 1].getColor() == c)||(cells[i - 1][j + 1].getColor() == c))&& (cells[i][j + 2].getColor() == c)){
+                        flag++;
+                        break;
+                    }
+                }
+                if ((i<width-2)&&(j>0)&&(j<height-1)) {
+                    if ((cells[i + 1][j].getColor() == c) && ((cells[i + 2][j + 1].getColor() == c) || (cells[i + 2][j - 1].getColor() == c))) {
+                        flag++;
+                        break;
+                    }
+                }
+                if ((i<width-1)&&(i>0)&&(j>0)&&(j<height-1)) {
+                    if ((cells[i + 1][j].getColor() == c) && ((cells[i - 1][j + 1].getColor() == c) || (cells[i - 1][j - 1].getColor() == c))) {
+                        flag++;
+                        break;
+                    }
+                }
+                if((i>0)&&(i<width-1)&&(j<height-2)) {
+                    if ((cells[i][j + 1].getColor() == c) && ((cells[i + 1][j + 2].getColor() == c) || (cells[i - 1][j + 2].getColor() == c))) {
+                        flag++;
+                        break;
+                    }
+                }
+                if((i>0)&&(i<width-1)&&(j<height-1)&&(j>0)) {
+                    if ((cells[i][j + 1].getColor() == c) && ((cells[i + 1][j - 1].getColor() == c) || (cells[i - 1][j - 1].getColor() == c))) {
+                        flag++;
+                        break;
+                    }
+                }
+            }
+            if (flag != 0){
+                break;
+            }
+
+        }
+        if (flag == 0) {
+            return true;//комбинаций нет
+        }
+        else return false; //комбинации есть
+    }
+
+
     public void recreate() {
         do {
             randomCreate();
             checkChain();
             moving();
         }while (numEmpty()!=0);
+        if (noCombinations()){
+            /////////////////////////////////////////////
+            // всплывающее окно о том, что нет комбинаций
+            /////////////////////////////////////////////
+            Gdx.app.log("нет комбинаций"," ");
+            recreate();
+        }
     }
 }
