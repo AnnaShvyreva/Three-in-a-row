@@ -36,7 +36,7 @@ public class GameScreen extends ThreeInARowScreen {
 
                 //добавить таймер
 
-                boardRenderer.board.recreate();
+                //boardRenderer.board.recreate();
 
                 return true;
             }
@@ -62,7 +62,7 @@ public class GameScreen extends ThreeInARowScreen {
     public void render(float delta) {
         super.render(delta);
 
-        boardRenderer.render(batch);
+        boardRenderer.render(batch, delta);
         batch.begin();
 
         batch.end();

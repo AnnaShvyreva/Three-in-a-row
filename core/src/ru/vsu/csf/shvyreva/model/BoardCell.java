@@ -4,9 +4,21 @@ public class BoardCell {
 
     public boolean isEmpty;
     public PieceColor color;
-    private Piece piece;
-    public boolean delete;
+    //private Piece piece;
+
+    /*public boolean toDelete;
+    public boolean toMove;*/
+
     public boolean select;
+
+
+    /*public boolean isToMove() {
+        return toMove;
+    }
+
+    public void setToMove(boolean toMove) {
+        this.toMove = toMove;
+    }*/
 
     public boolean isSelect() {
         return select;
@@ -16,13 +28,13 @@ public class BoardCell {
         this.select = select;
     }
 
-    public boolean isDelete() {
-        return delete;
+    /*public boolean isToDelete() {
+        return toDelete;
     }
 
-    public void setDelete(boolean delete) {
-        this.delete = delete;
-    }
+    public void setToDelete(boolean toDelete) {
+        this.toDelete = toDelete;
+    }*/
 
     public BoardCell(boolean isEmpty) {
         this.isEmpty = isEmpty;
@@ -44,11 +56,11 @@ public class BoardCell {
         return color;
     }
 
-    public Piece getPiece() {
+    /*public Piece getPiece() {
         return piece;
     }
 
     public void setPiece(Piece piece) {
         this.piece = piece;
-    }
+    }*/
 }

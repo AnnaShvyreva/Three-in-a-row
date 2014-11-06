@@ -12,6 +12,7 @@ public abstract class ThreeInARowScreen implements Screen{
     protected Game game;
 
     protected SpriteBatch batch;
+    //public SpriteBatch batch;
 
     @Override
     public void render(float delta) {

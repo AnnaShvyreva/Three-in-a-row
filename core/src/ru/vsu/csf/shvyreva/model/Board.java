@@ -2,14 +2,11 @@
 package ru.vsu.csf.shvyreva.model;
 
 import com.badlogic.gdx.Gdx;
-import com.sun.org.apache.bcel.internal.classfile.Unknown;
-import javafx.scene.control.Cell;
-import ru.vsu.csf.shvyreva.ThreeInARow;
-import ru.vsu.csf.shvyreva.renderers.BoardRenderer;
-import ru.vsu.csf.shvyreva.screens.GameScreen;
+import ru.vsu.csf.shvyreva.animators.Animator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 /**
@@ -21,29 +18,29 @@ import java.util.Random;
 
 public class Board {
 
+    private static final Random random = new Random();
 
     public  BoardCell[][] cells;
-    //public BoardCell selCell;
     public Boolean click = false;
     public SelectedCell firstClick;
     public SelectedCell secondClick;
 
     private static Board instance;
 
+    private boolean canAnimate = false;
+
     public BoardCell[][] getCells() {
         return cells;
     }
 
     private Board() {
-
-        int width = 8;
-        int height = 7;
+        int width = 7;
+        int height = 5;
         cells = new BoardCell[width][height];
 
         for(int j=0; j<width; j++) {
             for (int i = 0; i < height; i++) {
                 cells[j][i] = new BoardCell(true);
-                cells[j][i].setDelete(false);
                 cells[j][i].setSelect(false);
             }
         }
@@ -51,27 +48,15 @@ public class Board {
         do {
             randomCreate();
             checkChain();
-            ///////////////////////
-            ///////////////////////
-            //перерисовать! таймер!
-            ///////////////////////
-            ///////////////////////
             moving();
-        }while (numEmpty()!=0);
-
-
-
+        } while (numEmpty()!=0);
     }
 
-    public void selectedCell(int i, int j){
-        //click = true;
-        //Gdx.app.log("err "," j="+j+" i="+i);
+    public void selectCell(int i, int j){
         int x = cells.length - i-1;
         int y = cells[0].length - j-1;
-        //Gdx.app.log("err "," i="+i+" j="+j);
-        //Gdx.app.log("err "," x="+x+" y="+y);
         cells[x][y].setSelect(true);
-        Gdx.app.log("","Color = "+ cells[x][y].getColor());
+        //Gdx.app.log("","Color = "+ cells[x][y].getColor());
 
         for(int k=0; k<cells.length; k++) {
             for (int m = 0; m < cells[0].length; m++) {
@@ -79,9 +64,9 @@ public class Board {
             }
         }
 
-
-        if (click==true) {
+        if (click) {
             secondClick = new SelectedCell(x,y);
+            canAnimate = true;
             changeCells();
             click = false;
             cells[x][y].setSelect(false);
@@ -103,11 +88,11 @@ public class Board {
             cells[secondClick.getI()][secondClick.getJ()].setColor(p);
 
             checkChain();
-            if (numEmpty()!=0) moving();
+            /*if (numEmpty()!=0) moving();
             else {
                 cells[secondClick.getI()][secondClick.getJ()].setColor(cells[firstClick.getI()][firstClick.getJ()].getColor());
                 cells[firstClick.getI()][firstClick.getJ()].setColor(p);
-            }
+            }*/
         }
     }
 
@@ -128,7 +113,6 @@ public class Board {
 
     public void randomCreate()
     {
-        Random random = new Random();
         int height = cells[0].length;
 
         for (BoardCell[] cell : cells) {
@@ -141,8 +125,7 @@ public class Board {
         }
     }
 
-    public void checkChain(){
-
+    public void checkChain() {
         ArrayList<Point> toDelete = new ArrayList<Point>();
 
         int width = cells.length;
@@ -187,15 +170,10 @@ public class Board {
         }
 
         if (chainLength > 2) {
-
-            //Gdx.app.log("Game", "Last Chain found");
-
             for (int k = width - 1; k >= width - chainLength; k--){
                 toDelete.add(new Point(k, height - 1));
             }
         }
-
-
 
         for (int j=0; j<width; j++) {
             chainLength = 1;
@@ -221,10 +199,53 @@ public class Board {
             lastColor = PieceColor.Unknown;
         }
 
+        ArrayList<Point> toMove = setCellsToMove(toDelete);
+
         for (Point p : toDelete) {
             cells[p.getX()][p.getY()].setEmpty(true);
-            cells[p.getX()][p.getY()].setDelete(true);
         }
+        for (Point p : toMove) {
+            cells[p.getX()][p.getY()].setEmpty(true);
+        }
+
+        if (canAnimate && toDelete.size() > 0)
+            Animator.getInstance().init(this, toDelete, toMove);
+
+    }
+
+    public ArrayList<Point> setCellsToMove(ArrayList<Point> cellsToDelete) {
+
+        ArrayList<Point> result = new ArrayList<Point>();
+
+        for (Point  p : cellsToDelete) {
+            if (p.getY() == 0)
+                continue;
+            for (int i = p.getY()-1; i >= 0; i--) {
+                if (!cellsToDelete.contains(new Point(p.getX(), i))) {
+                    result.add(new Point(p.getX(), i));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void refresh(ArrayList<Point> toDelete) {
+        for (int i = 0; i < cells[0].length; ++i) {
+            for (BoardCell[] cell : cells) {
+                cell[i].setEmpty(false);
+            }
+        }
+
+        for (Point p : toDelete) {
+            cells[p.getX()][p.getY()].setEmpty(true);
+        }
+
+        do {
+            moving();
+            randomCreate();
+            checkChain();
+        } while (numEmpty()!=0);
     }
 
     public void moving() {
@@ -233,7 +254,6 @@ public class Board {
 
         for (int i= 0; i < width; i++) {
             for (int j = height - 1; j >= 1; j--) {
-                //Gdx.app.log("errMoving", "i= "+i+" j= "+j);
                 if (!cells[i][j].isEmpty)
                     continue; //если занята
 
@@ -246,38 +266,22 @@ public class Board {
                         cells[i][j].setEmpty(false);
 
                         cells[i][k].setEmpty(true);
-                        cells[i][k].setColor(PieceColor.Unknown);
-                        ///////////////////////
-                        ///////////////////////
-                        //ПЕРЕРИСОВАТЬ! ТАЙМЕР!
-                        ///////////////////////
-                        ///////////////////////
+                        //cells[i][k].setColor(PieceColor.Unknown);
                         break;
                     }
                 }
                 if (!bool) break;                   //если не нашли непустых
             }
         }
+
+
+        //Gdx.app.log("Moving", "Сделал, что мог :(");
     }
 
     public static Board getBoard(){
         if (instance == null)
             instance = new Board();
         return instance;
-    }
-
-    public Board(File file) {
-        //TODO: init
-
-    }
-
-    public void makeMove(int row, int col, Direction dir) {
-        //TODO: make a move
-    }
-
-    protected void fallPieces(int[][] affectedArea) {
-        //TODO: falling logic
-
     }
 
     public boolean noCombinations(){
@@ -351,18 +355,30 @@ public class Board {
     }
 
 
+    public void cleanBoard(){
+        int width = cells.length;
+        int height = cells[0].length;
+
+        for (int i= 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                cells[i][j].setEmpty(true);
+                //cells[i][j].setToDelete(true);
+            }
+        }
+    }
+
     public void recreate() {
-        do {
-            randomCreate();
-            checkChain();
-            moving();
-        }while (numEmpty()!=0);
-        if (noCombinations()){
+
+        moving();
+
+
+        /*if (noCombinations()){
             /////////////////////////////////////////////
             // всплывающее окно о том, что нет комбинаций
             /////////////////////////////////////////////
             Gdx.app.log("нет комбинаций"," ");
+            cleanBoard();
             recreate();
-        }
+        }*/
     }
 }
